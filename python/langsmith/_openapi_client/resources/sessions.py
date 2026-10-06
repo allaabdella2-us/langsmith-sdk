@@ -55,7 +55,8 @@ class SessionsResource(SyncAPIResource):
 
         The
         environment is matched case-insensitively. An address that does not exist, or
-        whose project you cannot read, is a 404.
+        whose project you cannot read, is a 404. Pass the returned `session_id` to any
+        endpoint that takes a project (session) ID.
 
         Args:
           address: `address` is the Agent environment address to resolve.
@@ -113,7 +114,8 @@ class AsyncSessionsResource(AsyncAPIResource):
 
         The
         environment is matched case-insensitively. An address that does not exist, or
-        whose project you cannot read, is a 404.
+        whose project you cannot read, is a 404. Pass the returned `session_id` to any
+        endpoint that takes a project (session) ID.
 
         Args:
           address: `address` is the Agent environment address to resolve.
