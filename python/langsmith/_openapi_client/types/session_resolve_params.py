@@ -2,18 +2,19 @@
 
 from __future__ import annotations
 
-from typing import Iterable
 from typing_extensions import Literal, Required, TypedDict
 
 __all__ = ["SessionResolveParams", "Address"]
 
 
 class SessionResolveParams(TypedDict, total=False):
-    addresses: Required[Iterable[Address]]
-    """`addresses` are the Agent environment addresses to resolve."""
+    address: Required[Address]
+    """`address` is the Agent environment address to resolve."""
 
 
 class Address(TypedDict, total=False):
+    """`address` is the Agent environment address to resolve."""
+
     id: Required[str]
     """`id` is the Agent's user-assigned id."""
 

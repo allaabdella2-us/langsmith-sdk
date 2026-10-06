@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Iterable
-
 from ..types import session_resolve_params
 from .._httpx import httpx
 from .._types import Body, Query, Headers, NotGiven, not_given
@@ -45,7 +43,7 @@ class SessionsResource(SyncAPIResource):
     def resolve(
         self,
         *,
-        addresses: Iterable[session_resolve_params.Address],
+        address: session_resolve_params.Address,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -53,13 +51,14 @@ class SessionsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> SessionResolveResponse:
-        """
-        Returns the tracing project (session) of each Agent environment address, in
-        request order. The environment is matched case-insensitively. An address that
-        does not exist, or whose project you cannot read, is a 404.
+        """Returns the tracing project (session) of an Agent environment address.
+
+        The
+        environment is matched case-insensitively. An address that does not exist, or
+        whose project you cannot read, is a 404.
 
         Args:
-          addresses: `addresses` are the Agent environment addresses to resolve.
+          address: `address` is the Agent environment address to resolve.
 
           extra_headers: Send extra headers
 
@@ -71,7 +70,7 @@ class SessionsResource(SyncAPIResource):
         """
         return self._post(
             "/api/v1/sessions/resolve",
-            body=maybe_transform({"addresses": addresses}, session_resolve_params.SessionResolveParams),
+            body=maybe_transform({"address": address}, session_resolve_params.SessionResolveParams),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
@@ -102,7 +101,7 @@ class AsyncSessionsResource(AsyncAPIResource):
     async def resolve(
         self,
         *,
-        addresses: Iterable[session_resolve_params.Address],
+        address: session_resolve_params.Address,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -110,13 +109,14 @@ class AsyncSessionsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> SessionResolveResponse:
-        """
-        Returns the tracing project (session) of each Agent environment address, in
-        request order. The environment is matched case-insensitively. An address that
-        does not exist, or whose project you cannot read, is a 404.
+        """Returns the tracing project (session) of an Agent environment address.
+
+        The
+        environment is matched case-insensitively. An address that does not exist, or
+        whose project you cannot read, is a 404.
 
         Args:
-          addresses: `addresses` are the Agent environment addresses to resolve.
+          address: `address` is the Agent environment address to resolve.
 
           extra_headers: Send extra headers
 
@@ -128,7 +128,7 @@ class AsyncSessionsResource(AsyncAPIResource):
         """
         return await self._post(
             "/api/v1/sessions/resolve",
-            body=await async_maybe_transform({"addresses": addresses}, session_resolve_params.SessionResolveParams),
+            body=await async_maybe_transform({"address": address}, session_resolve_params.SessionResolveParams),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
