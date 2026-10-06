@@ -51,13 +51,16 @@ class SessionsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> SessionResolveResponse:
-        """Returns the tracing project (session) an address names.
+        """GET with body payload — no resources created.
 
-        An address is an AGENT
-        (`id` and `environment`, matched case-insensitively), an EXPERIMENT (`id`), or
-        an EVALUATOR (no `id`: evaluator traces share one project per workspace). An
-        address that does not exist, or whose project you cannot read, is a 404. Pass
-        the returned `session_id` to any endpoint that takes a project (session) ID.
+        Returns the tracing project
+        (session) matching the address passed as the request payload. An address is an
+        AGENT (`id` and `environment`, matched case-insensitively), an EXPERIMENT
+        (`id`), or an EVALUATOR (no `id`: evaluator traces share one project per
+        workspace). An address that does not exist, or whose project you cannot read, is
+        a 404. Pass the returned `session_id` to any endpoint that takes a project
+        (session) ID. This is not supported on a BYOC data plane yet, and is a 501
+        there.
 
         Args:
           address: `address` names the tracing project to resolve.
@@ -71,7 +74,7 @@ class SessionsResource(SyncAPIResource):
           timeout: Override the client-level default timeout for this request, in seconds
         """
         return self._post(
-            "/api/v1/sessions/resolve",
+            "/api/v1/sessions/resolutions",
             body=maybe_transform({"address": address}, session_resolve_params.SessionResolveParams),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
@@ -111,13 +114,16 @@ class AsyncSessionsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> SessionResolveResponse:
-        """Returns the tracing project (session) an address names.
+        """GET with body payload — no resources created.
 
-        An address is an AGENT
-        (`id` and `environment`, matched case-insensitively), an EXPERIMENT (`id`), or
-        an EVALUATOR (no `id`: evaluator traces share one project per workspace). An
-        address that does not exist, or whose project you cannot read, is a 404. Pass
-        the returned `session_id` to any endpoint that takes a project (session) ID.
+        Returns the tracing project
+        (session) matching the address passed as the request payload. An address is an
+        AGENT (`id` and `environment`, matched case-insensitively), an EXPERIMENT
+        (`id`), or an EVALUATOR (no `id`: evaluator traces share one project per
+        workspace). An address that does not exist, or whose project you cannot read, is
+        a 404. Pass the returned `session_id` to any endpoint that takes a project
+        (session) ID. This is not supported on a BYOC data plane yet, and is a 501
+        there.
 
         Args:
           address: `address` names the tracing project to resolve.
@@ -131,7 +137,7 @@ class AsyncSessionsResource(AsyncAPIResource):
           timeout: Override the client-level default timeout for this request, in seconds
         """
         return await self._post(
-            "/api/v1/sessions/resolve",
+            "/api/v1/sessions/resolutions",
             body=await async_maybe_transform({"address": address}, session_resolve_params.SessionResolveParams),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
