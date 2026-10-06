@@ -24,7 +24,6 @@ from .info_list_response import InfoListResponse as InfoListResponse
 from .online_spend_limit import OnlineSpendLimit as OnlineSpendLimit
 from .run_get_url_params import RunGetURLParams as RunGetURLParams
 from .trace_query_params import TraceQueryParams as TraceQueryParams
-from .agent_address_param import AgentAddressParam as AgentAddressParam
 from .run_query_v2_params import RunQueryV2Params as RunQueryV2Params
 from .run_retrieve_params import RunRetrieveParams as RunRetrieveParams
 from .thread_query_params import ThreadQueryParams as ThreadQueryParams
