@@ -43,7 +43,7 @@ class SessionsResource(SyncAPIResource):
     def resolve(
         self,
         *,
-        address: session_resolve_params.AgentAddress,
+        address: session_resolve_params.ResolveAddress,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -51,15 +51,16 @@ class SessionsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> SessionResolveResponse:
-        """Returns the tracing project (session) of an Agent environment address.
+        """Returns the tracing project (session) an address names.
 
-        The
-        environment is matched case-insensitively. An address that does not exist, or
-        whose project you cannot read, is a 404. Pass the returned `session_id` to any
-        endpoint that takes a project (session) ID.
+        An address is an AGENT
+        (`id` and `environment`, matched case-insensitively), an EXPERIMENT (`id`), or
+        an EVALUATOR (no `id`: evaluator traces share one project per workspace). An
+        address that does not exist, or whose project you cannot read, is a 404. Pass
+        the returned `session_id` to any endpoint that takes a project (session) ID.
 
         Args:
-          address: `address` is the Agent environment address to resolve.
+          address: `address` names the tracing project to resolve.
 
           extra_headers: Send extra headers
 
@@ -102,7 +103,7 @@ class AsyncSessionsResource(AsyncAPIResource):
     async def resolve(
         self,
         *,
-        address: session_resolve_params.AgentAddress,
+        address: session_resolve_params.ResolveAddress,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -110,15 +111,16 @@ class AsyncSessionsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> SessionResolveResponse:
-        """Returns the tracing project (session) of an Agent environment address.
+        """Returns the tracing project (session) an address names.
 
-        The
-        environment is matched case-insensitively. An address that does not exist, or
-        whose project you cannot read, is a 404. Pass the returned `session_id` to any
-        endpoint that takes a project (session) ID.
+        An address is an AGENT
+        (`id` and `environment`, matched case-insensitively), an EXPERIMENT (`id`), or
+        an EVALUATOR (no `id`: evaluator traces share one project per workspace). An
+        address that does not exist, or whose project you cannot read, is a 404. Pass
+        the returned `session_id` to any endpoint that takes a project (session) ID.
 
         Args:
-          address: `address` is the Agent environment address to resolve.
+          address: `address` names the tracing project to resolve.
 
           extra_headers: Send extra headers
 

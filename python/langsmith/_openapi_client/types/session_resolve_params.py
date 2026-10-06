@@ -4,22 +4,25 @@ from __future__ import annotations
 
 from typing_extensions import Literal, Required, TypedDict
 
-__all__ = ["SessionResolveParams", "AgentAddress"]
+__all__ = ["SessionResolveParams", "ResolveAddress"]
 
 
 class SessionResolveParams(TypedDict, total=False):
-    address: Required[AgentAddress]
-    """`address` is the Agent environment address to resolve."""
+    address: Required[ResolveAddress]
+    """`address` names the tracing project to resolve."""
 
 
-class AgentAddress(TypedDict, total=False):
-    """`address` is the Agent environment address to resolve."""
+class ResolveAddress(TypedDict, total=False):
+    """`address` names the tracing project to resolve."""
 
-    id: Required[str]
-    """`id` is the Agent's user-assigned id."""
+    kind: Required[Literal["AGENT", "EXPERIMENT", "EVALUATOR"]]
+    """`kind` is the type of address."""
 
-    environment: Required[Literal["LOCAL", "DEVELOPMENT", "STAGING", "PRODUCTION"]]
-    """`environment` is the Agent environment."""
+    id: str
+    """
+    `id` is the Agent's user-assigned id for AGENT, or the experiment's id for
+    EXPERIMENT. It is not set for EVALUATOR.
+    """
 
-    kind: Required[Literal["AGENT"]]
-    """`kind` is always `AGENT`."""
+    environment: Literal["LOCAL", "DEVELOPMENT", "STAGING", "PRODUCTION"]
+    """`environment` is the Agent environment. It is only set for AGENT."""

@@ -9,4 +9,4 @@ __all__ = ["SessionResolveResponse"]
 
 class SessionResolveResponse(BaseModel):
     session_id: Optional[str] = None
-    """`session_id` is the tracing project (session) of the Agent environment."""
+    """`session_id` is the tracing project (session) the address names."""
