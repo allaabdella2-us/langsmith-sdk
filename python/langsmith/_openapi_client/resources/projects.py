@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing_extensions import Literal
 
-from ..types import session_resolve_params
+from ..types import project_resolve_params
 from .._httpx import httpx
 from .._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
 from .._utils import maybe_transform, async_maybe_transform
@@ -17,30 +17,30 @@ from .._response import (
     async_to_streamed_response_wrapper,
 )
 from .._base_client import make_request_options
-from ..types.session_resolve_response import SessionResolveResponse
+from ..types.project_resolve_response import ProjectResolveResponse
 
-__all__ = ["SessionsResource", "AsyncSessionsResource"]
+__all__ = ["ProjectsResource", "AsyncProjectsResource"]
 
 
-class SessionsResource(SyncAPIResource):
+class ProjectsResource(SyncAPIResource):
     @cached_property
-    def with_raw_response(self) -> SessionsResourceWithRawResponse:
+    def with_raw_response(self) -> ProjectsResourceWithRawResponse:
         """
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
         For more information, see https://www.github.com/langchain-ai/langsmith-python#accessing-raw-response-data-eg-headers
         """
-        return SessionsResourceWithRawResponse(self)
+        return ProjectsResourceWithRawResponse(self)
 
     @cached_property
-    def with_streaming_response(self) -> SessionsResourceWithStreamingResponse:
+    def with_streaming_response(self) -> ProjectsResourceWithStreamingResponse:
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
         For more information, see https://www.github.com/langchain-ai/langsmith-python#with_streaming_response
         """
-        return SessionsResourceWithStreamingResponse(self)
+        return ProjectsResourceWithStreamingResponse(self)
 
     def resolve(
         self,
@@ -54,7 +54,7 @@ class SessionsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> SessionResolveResponse:
+    ) -> ProjectResolveResponse:
         """Returns the tracing project (session) an address names.
 
         An address is an AGENT
@@ -93,32 +93,32 @@ class SessionsResource(SyncAPIResource):
                         "id": id,
                         "environment": environment,
                     },
-                    session_resolve_params.SessionResolveParams,
+                    project_resolve_params.ProjectResolveParams,
                 ),
             ),
-            cast_to=SessionResolveResponse,
+            cast_to=ProjectResolveResponse,
         )
 
 
-class AsyncSessionsResource(AsyncAPIResource):
+class AsyncProjectsResource(AsyncAPIResource):
     @cached_property
-    def with_raw_response(self) -> AsyncSessionsResourceWithRawResponse:
+    def with_raw_response(self) -> AsyncProjectsResourceWithRawResponse:
         """
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
         For more information, see https://www.github.com/langchain-ai/langsmith-python#accessing-raw-response-data-eg-headers
         """
-        return AsyncSessionsResourceWithRawResponse(self)
+        return AsyncProjectsResourceWithRawResponse(self)
 
     @cached_property
-    def with_streaming_response(self) -> AsyncSessionsResourceWithStreamingResponse:
+    def with_streaming_response(self) -> AsyncProjectsResourceWithStreamingResponse:
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
         For more information, see https://www.github.com/langchain-ai/langsmith-python#with_streaming_response
         """
-        return AsyncSessionsResourceWithStreamingResponse(self)
+        return AsyncProjectsResourceWithStreamingResponse(self)
 
     async def resolve(
         self,
@@ -132,7 +132,7 @@ class AsyncSessionsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> SessionResolveResponse:
+    ) -> ProjectResolveResponse:
         """Returns the tracing project (session) an address names.
 
         An address is an AGENT
@@ -171,44 +171,44 @@ class AsyncSessionsResource(AsyncAPIResource):
                         "id": id,
                         "environment": environment,
                     },
-                    session_resolve_params.SessionResolveParams,
+                    project_resolve_params.ProjectResolveParams,
                 ),
             ),
-            cast_to=SessionResolveResponse,
+            cast_to=ProjectResolveResponse,
         )
 
 
-class SessionsResourceWithRawResponse:
-    def __init__(self, sessions: SessionsResource) -> None:
-        self._sessions = sessions
+class ProjectsResourceWithRawResponse:
+    def __init__(self, projects: ProjectsResource) -> None:
+        self._projects = projects
 
         self.resolve = to_raw_response_wrapper(
-            sessions.resolve,
+            projects.resolve,
         )
 
 
-class AsyncSessionsResourceWithRawResponse:
-    def __init__(self, sessions: AsyncSessionsResource) -> None:
-        self._sessions = sessions
+class AsyncProjectsResourceWithRawResponse:
+    def __init__(self, projects: AsyncProjectsResource) -> None:
+        self._projects = projects
 
         self.resolve = async_to_raw_response_wrapper(
-            sessions.resolve,
+            projects.resolve,
         )
 
 
-class SessionsResourceWithStreamingResponse:
-    def __init__(self, sessions: SessionsResource) -> None:
-        self._sessions = sessions
+class ProjectsResourceWithStreamingResponse:
+    def __init__(self, projects: ProjectsResource) -> None:
+        self._projects = projects
 
         self.resolve = to_streamed_response_wrapper(
-            sessions.resolve,
+            projects.resolve,
         )
 
 
-class AsyncSessionsResourceWithStreamingResponse:
-    def __init__(self, sessions: AsyncSessionsResource) -> None:
-        self._sessions = sessions
+class AsyncProjectsResourceWithStreamingResponse:
+    def __init__(self, projects: AsyncProjectsResource) -> None:
+        self._projects = projects
 
         self.resolve = async_to_streamed_response_wrapper(
-            sessions.resolve,
+            projects.resolve,
         )
