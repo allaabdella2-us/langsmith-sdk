@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { jest, describe, it, expect } from "@jest/globals";
+import { jest, describe, it, expect, afterEach } from "@jest/globals";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -2731,5 +2731,69 @@ describe("SandboxClient registries", () => {
     expect(first).toBeDefined();
     // Lazily built once and reused.
     expect(client.registries).toBe(first);
+  });
+});
+
+// QAAS-62: LANGSMITH_ENDPOINT may be a bare host or end in /api or /api/v1
+// (self-hosted). Every form must reach the same /api/v2/sandboxes URLs, with
+// the same rule as Client._getOpenAPIBaseUrl and no doubled prefix.
+describe("SandboxClient endpoint base URL", () => {
+  const saved = {
+    LANGSMITH_ENDPOINT: process.env.LANGSMITH_ENDPOINT,
+    LANGCHAIN_ENDPOINT: process.env.LANGCHAIN_ENDPOINT,
+  };
+
+  afterEach(() => {
+    for (const [k, v] of Object.entries(saved)) {
+      if (v === undefined) delete process.env[k];
+      else process.env[k] = v;
+    }
+  });
+
+  const requestedUrls = async (client: SandboxClient): Promise<string[]> => {
+    const mockFetch = jest
+      .fn<(url: any, init?: RequestInit) => Promise<Response>>()
+      .mockImplementation(
+        async () =>
+          new Response(JSON.stringify({ sandboxes: [], registries: [] }), {
+            status: 200,
+            headers: { "content-type": "application/json" },
+          }),
+      );
+    (client as any)._fetchImpl = mockFetch;
+    await client.listSandboxes();
+    await client.registries.list();
+    return mockFetch.mock.calls.map(([url]) => String(url).split("?")[0]);
+  };
+
+  it.each([
+    ["https://host/api/v1", "https://host"],
+    ["https://host/api/v1/", "https://host"],
+    ["https://host/api", "https://host"],
+    ["https://host", "https://host"],
+    [undefined, "https://api.smith.langchain.com"],
+  ])("LANGSMITH_ENDPOINT=%s", async (endpoint, host) => {
+    delete process.env.LANGCHAIN_ENDPOINT;
+    if (endpoint === undefined) delete process.env.LANGSMITH_ENDPOINT;
+    else process.env.LANGSMITH_ENDPOINT = endpoint;
+    const urls = await requestedUrls(new SandboxClient({ apiKey: "k" }));
+    expect(urls).toEqual([
+      `${host}/api/v2/sandboxes/boxes`,
+      `${host}/api/v2/sandboxes/registries`,
+    ]);
+  });
+
+  it.each([
+    "https://host/api/v2/sandboxes",
+    "https://api.smith.langchain.com/v2/sandboxes",
+  ])("explicit apiEndpoint=%s keeps boxes, fixes registries", async (ep) => {
+    const host = new URL(ep).origin;
+    const urls = await requestedUrls(
+      new SandboxClient({ apiEndpoint: ep, apiKey: "k" }),
+    );
+    expect(urls).toEqual([
+      `${ep}/boxes`,
+      `${host}/api/v2/sandboxes/registries`,
+    ]);
   });
 });
