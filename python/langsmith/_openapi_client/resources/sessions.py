@@ -55,9 +55,9 @@ class SessionsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> SessionResolveResponse:
-        """Returns the tracing project (session) an address names.
-
-        An address is an AGENT
+        """
+        **Beta:** This endpoint is in active development and may change without notice.
+        Returns the tracing project (session) an address names. An address is an AGENT
         (`id` and `environment`), an EXPERIMENT (`id`), or an EVALUATOR (no `id`:
         evaluator traces share one project per workspace). Send `kind` and `environment`
         in upper case, as listed; they are matched case-insensitively, while the Agent
@@ -135,9 +135,9 @@ class AsyncSessionsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> SessionResolveResponse:
-        """Returns the tracing project (session) an address names.
-
-        An address is an AGENT
+        """
+        **Beta:** This endpoint is in active development and may change without notice.
+        Returns the tracing project (session) an address names. An address is an AGENT
         (`id` and `environment`), an EXPERIMENT (`id`), or an EVALUATOR (no `id`:
         evaluator traces share one project per workspace). Send `kind` and `environment`
         in upper case, as listed; they are matched case-insensitively, while the Agent
