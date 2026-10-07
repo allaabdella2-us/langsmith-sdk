@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+from typing_extensions import Literal
+
 from ..types import session_resolve_params
 from .._httpx import httpx
-from .._types import Body, Query, Headers, NotGiven, not_given
+from .._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
 from .._utils import maybe_transform, async_maybe_transform
 from .._compat import cached_property
 from .._resource import SyncAPIResource, AsyncAPIResource
@@ -43,7 +45,9 @@ class SessionsResource(SyncAPIResource):
     def resolve(
         self,
         *,
-        address: session_resolve_params.ResolveAddress,
+        kind: Literal["AGENT", "EXPERIMENT", "EVALUATOR"],
+        id: str | Omit = omit,
+        environment: Literal["LOCAL", "DEVELOPMENT", "STAGING", "PRODUCTION"] | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -51,19 +55,22 @@ class SessionsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> SessionResolveResponse:
-        """GET with body payload — no resources created.
+        """Returns the tracing project (session) an address names.
 
-        Returns the tracing project
-        (session) matching the address passed as the request payload. An address is an
-        AGENT (`id` and `environment`, matched case-insensitively), an EXPERIMENT
-        (`id`), or an EVALUATOR (no `id`: evaluator traces share one project per
-        workspace). An address that does not exist, or whose project you cannot read, is
-        a 404. Pass the returned `session_id` to any endpoint that takes a project
-        (session) ID. This is not supported on a BYOC data plane yet, and is a 501
-        there.
+        An address is an AGENT
+        (`id` and `environment`, matched case-insensitively), an EXPERIMENT (`id`), or
+        an EVALUATOR (no `id`: evaluator traces share one project per workspace). An
+        address that does not exist, or whose project you cannot read, is a 404. Pass
+        the returned `session_id` to any endpoint that takes a project (session) ID.
+        This is not supported on a BYOC data plane yet, and is a 501 there.
 
         Args:
-          address: `address` names the tracing project to resolve.
+          kind: The kind of address.
+
+          id: The Agent's user-assigned id for AGENT, or the experiment's id for EXPERIMENT.
+              Not set for EVALUATOR.
+
+          environment: The Agent environment. Only set for AGENT.
 
           extra_headers: Send extra headers
 
@@ -73,11 +80,21 @@ class SessionsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        return self._post(
+        return self._get(
             "/api/v1/sessions/resolutions",
-            body=maybe_transform({"address": address}, session_resolve_params.SessionResolveParams),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "kind": kind,
+                        "id": id,
+                        "environment": environment,
+                    },
+                    session_resolve_params.SessionResolveParams,
+                ),
             ),
             cast_to=SessionResolveResponse,
         )
@@ -106,7 +123,9 @@ class AsyncSessionsResource(AsyncAPIResource):
     async def resolve(
         self,
         *,
-        address: session_resolve_params.ResolveAddress,
+        kind: Literal["AGENT", "EXPERIMENT", "EVALUATOR"],
+        id: str | Omit = omit,
+        environment: Literal["LOCAL", "DEVELOPMENT", "STAGING", "PRODUCTION"] | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -114,19 +133,22 @@ class AsyncSessionsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> SessionResolveResponse:
-        """GET with body payload — no resources created.
+        """Returns the tracing project (session) an address names.
 
-        Returns the tracing project
-        (session) matching the address passed as the request payload. An address is an
-        AGENT (`id` and `environment`, matched case-insensitively), an EXPERIMENT
-        (`id`), or an EVALUATOR (no `id`: evaluator traces share one project per
-        workspace). An address that does not exist, or whose project you cannot read, is
-        a 404. Pass the returned `session_id` to any endpoint that takes a project
-        (session) ID. This is not supported on a BYOC data plane yet, and is a 501
-        there.
+        An address is an AGENT
+        (`id` and `environment`, matched case-insensitively), an EXPERIMENT (`id`), or
+        an EVALUATOR (no `id`: evaluator traces share one project per workspace). An
+        address that does not exist, or whose project you cannot read, is a 404. Pass
+        the returned `session_id` to any endpoint that takes a project (session) ID.
+        This is not supported on a BYOC data plane yet, and is a 501 there.
 
         Args:
-          address: `address` names the tracing project to resolve.
+          kind: The kind of address.
+
+          id: The Agent's user-assigned id for AGENT, or the experiment's id for EXPERIMENT.
+              Not set for EVALUATOR.
+
+          environment: The Agent environment. Only set for AGENT.
 
           extra_headers: Send extra headers
 
@@ -136,11 +158,21 @@ class AsyncSessionsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        return await self._post(
+        return await self._get(
             "/api/v1/sessions/resolutions",
-            body=await async_maybe_transform({"address": address}, session_resolve_params.SessionResolveParams),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "kind": kind,
+                        "id": id,
+                        "environment": environment,
+                    },
+                    session_resolve_params.SessionResolveParams,
+                ),
             ),
             cast_to=SessionResolveResponse,
         )
