@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing_extensions import Literal
 
-from ..types import project_resolve_params
+from ..types import session_resolve_params
 from .._httpx import httpx
 from .._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
 from .._utils import maybe_transform, async_maybe_transform
@@ -17,30 +17,30 @@ from .._response import (
     async_to_streamed_response_wrapper,
 )
 from .._base_client import make_request_options
-from ..types.project_resolve_response import ProjectResolveResponse
+from ..types.session_resolve_response import SessionResolveResponse
 
-__all__ = ["ProjectsResource", "AsyncProjectsResource"]
+__all__ = ["SessionsResource", "AsyncSessionsResource"]
 
 
-class ProjectsResource(SyncAPIResource):
+class SessionsResource(SyncAPIResource):
     @cached_property
-    def with_raw_response(self) -> ProjectsResourceWithRawResponse:
+    def with_raw_response(self) -> SessionsResourceWithRawResponse:
         """
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
         For more information, see https://www.github.com/langchain-ai/langsmith-python#accessing-raw-response-data-eg-headers
         """
-        return ProjectsResourceWithRawResponse(self)
+        return SessionsResourceWithRawResponse(self)
 
     @cached_property
-    def with_streaming_response(self) -> ProjectsResourceWithStreamingResponse:
+    def with_streaming_response(self) -> SessionsResourceWithStreamingResponse:
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
         For more information, see https://www.github.com/langchain-ai/langsmith-python#with_streaming_response
         """
-        return ProjectsResourceWithStreamingResponse(self)
+        return SessionsResourceWithStreamingResponse(self)
 
     def resolve(
         self,
@@ -54,15 +54,17 @@ class ProjectsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> ProjectResolveResponse:
+    ) -> SessionResolveResponse:
         """Returns the tracing project (session) an address names.
 
         An address is an AGENT
-        (`id` and `environment`, matched case-insensitively), an EXPERIMENT (`id`), or
-        an EVALUATOR (no `id`: evaluator traces share one project per workspace). An
-        address that does not exist, or whose project you cannot read, is a 404. Pass
-        the returned `session_id` to any endpoint that takes a project (session) ID.
-        This is not supported on a BYOC data plane yet, and is a 501 there.
+        (`id` and `environment`), an EXPERIMENT (`id`), or an EVALUATOR (no `id`:
+        evaluator traces share one project per workspace). Send `kind` and `environment`
+        in upper case, as listed; they are matched case-insensitively, while the Agent
+        `id` is case-sensitive. An address that does not exist, or whose project you
+        cannot read, is a 404. Pass the returned `session_id` to any endpoint that takes
+        a project (session) ID. This is not supported on a BYOC data plane yet, and is a
+        501 there.
 
         Args:
           kind: The kind of address.
@@ -93,32 +95,32 @@ class ProjectsResource(SyncAPIResource):
                         "id": id,
                         "environment": environment,
                     },
-                    project_resolve_params.ProjectResolveParams,
+                    session_resolve_params.SessionResolveParams,
                 ),
             ),
-            cast_to=ProjectResolveResponse,
+            cast_to=SessionResolveResponse,
         )
 
 
-class AsyncProjectsResource(AsyncAPIResource):
+class AsyncSessionsResource(AsyncAPIResource):
     @cached_property
-    def with_raw_response(self) -> AsyncProjectsResourceWithRawResponse:
+    def with_raw_response(self) -> AsyncSessionsResourceWithRawResponse:
         """
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
         For more information, see https://www.github.com/langchain-ai/langsmith-python#accessing-raw-response-data-eg-headers
         """
-        return AsyncProjectsResourceWithRawResponse(self)
+        return AsyncSessionsResourceWithRawResponse(self)
 
     @cached_property
-    def with_streaming_response(self) -> AsyncProjectsResourceWithStreamingResponse:
+    def with_streaming_response(self) -> AsyncSessionsResourceWithStreamingResponse:
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
         For more information, see https://www.github.com/langchain-ai/langsmith-python#with_streaming_response
         """
-        return AsyncProjectsResourceWithStreamingResponse(self)
+        return AsyncSessionsResourceWithStreamingResponse(self)
 
     async def resolve(
         self,
@@ -132,15 +134,17 @@ class AsyncProjectsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> ProjectResolveResponse:
+    ) -> SessionResolveResponse:
         """Returns the tracing project (session) an address names.
 
         An address is an AGENT
-        (`id` and `environment`, matched case-insensitively), an EXPERIMENT (`id`), or
-        an EVALUATOR (no `id`: evaluator traces share one project per workspace). An
-        address that does not exist, or whose project you cannot read, is a 404. Pass
-        the returned `session_id` to any endpoint that takes a project (session) ID.
-        This is not supported on a BYOC data plane yet, and is a 501 there.
+        (`id` and `environment`), an EXPERIMENT (`id`), or an EVALUATOR (no `id`:
+        evaluator traces share one project per workspace). Send `kind` and `environment`
+        in upper case, as listed; they are matched case-insensitively, while the Agent
+        `id` is case-sensitive. An address that does not exist, or whose project you
+        cannot read, is a 404. Pass the returned `session_id` to any endpoint that takes
+        a project (session) ID. This is not supported on a BYOC data plane yet, and is a
+        501 there.
 
         Args:
           kind: The kind of address.
@@ -171,44 +175,44 @@ class AsyncProjectsResource(AsyncAPIResource):
                         "id": id,
                         "environment": environment,
                     },
-                    project_resolve_params.ProjectResolveParams,
+                    session_resolve_params.SessionResolveParams,
                 ),
             ),
-            cast_to=ProjectResolveResponse,
+            cast_to=SessionResolveResponse,
         )
 
 
-class ProjectsResourceWithRawResponse:
-    def __init__(self, projects: ProjectsResource) -> None:
-        self._projects = projects
+class SessionsResourceWithRawResponse:
+    def __init__(self, sessions: SessionsResource) -> None:
+        self._sessions = sessions
 
         self.resolve = to_raw_response_wrapper(
-            projects.resolve,
+            sessions.resolve,
         )
 
 
-class AsyncProjectsResourceWithRawResponse:
-    def __init__(self, projects: AsyncProjectsResource) -> None:
-        self._projects = projects
+class AsyncSessionsResourceWithRawResponse:
+    def __init__(self, sessions: AsyncSessionsResource) -> None:
+        self._sessions = sessions
 
         self.resolve = async_to_raw_response_wrapper(
-            projects.resolve,
+            sessions.resolve,
         )
 
 
-class ProjectsResourceWithStreamingResponse:
-    def __init__(self, projects: ProjectsResource) -> None:
-        self._projects = projects
+class SessionsResourceWithStreamingResponse:
+    def __init__(self, sessions: SessionsResource) -> None:
+        self._sessions = sessions
 
         self.resolve = to_streamed_response_wrapper(
-            projects.resolve,
+            sessions.resolve,
         )
 
 
-class AsyncProjectsResourceWithStreamingResponse:
-    def __init__(self, projects: AsyncProjectsResource) -> None:
-        self._projects = projects
+class AsyncSessionsResourceWithStreamingResponse:
+    def __init__(self, sessions: AsyncSessionsResource) -> None:
+        self._sessions = sessions
 
         self.resolve = async_to_streamed_response_wrapper(
-            projects.resolve,
+            sessions.resolve,
         )
