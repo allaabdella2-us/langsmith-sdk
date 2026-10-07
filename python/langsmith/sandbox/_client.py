@@ -16,6 +16,7 @@ from urllib.parse import quote
 from langsmith import utils as ls_utils
 from langsmith._openapi_client import Langsmith
 from langsmith._openapi_client._httpx import httpx
+from langsmith.client import _get_openapi_base_url
 from langsmith.sandbox._access_delegation import (
     AccessDelegation,
     _validate_access_delegation,
@@ -65,10 +66,11 @@ if TYPE_CHECKING:
 def _get_default_api_endpoint() -> str:
     """Get the default sandbox API endpoint from environment.
 
-    Derives the endpoint from LANGSMITH_ENDPOINT (or LANGCHAIN_ENDPOINT).
+    Derives the endpoint from LANGSMITH_ENDPOINT (or LANGCHAIN_ENDPOINT) with the
+    main Client's base-URL rule, so a trailing ``/api/v1`` or ``/api`` is not doubled.
     """
     base = ls_utils.get_env_var("ENDPOINT", default="https://api.smith.langchain.com")
-    return f"{base.rstrip('/')}/v2/sandboxes"
+    return f"{_get_openapi_base_url(base)}/api/v2/sandboxes"
 
 
 def _get_default_api_key() -> Optional[str]:
@@ -264,11 +266,12 @@ class SandboxClient:
         self._registries_client: Optional[Langsmith] = None
 
     def _api_root(self) -> str:
-        """Return the API root URL, without the ``/v2/sandboxes`` suffix."""
+        """Return the API root URL, without the ``[/api]/v2/sandboxes`` suffix."""
+        root = self._base_url
         suffix = "/v2/sandboxes"
-        if self._base_url.endswith(suffix):
-            return self._base_url[: -len(suffix)]
-        return self._base_url
+        if root.endswith(suffix):
+            root = root[: -len(suffix)]
+        return _get_openapi_base_url(root)
 
     @property
     def registries(self) -> RegistriesResource:

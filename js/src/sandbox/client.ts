@@ -72,15 +72,29 @@ function sleepWithSignal(ms: number, signal?: AbortSignal): Promise<void> {
 }
 
 /**
+ * Strip a trailing "/api/v1" or "/api" from an endpoint.
+ *
+ * Same rule as Client._getOpenAPIBaseUrl (src/client.ts); keep them in step.
+ */
+function getOpenAPIBaseUrl(apiUrl: string): string {
+  const url = apiUrl.replace(/\/$/, "");
+  for (const suffix of ["/api/v1", "/api"]) {
+    if (url.endsWith(suffix)) return url.slice(0, -suffix.length);
+  }
+  return url;
+}
+
+/**
  * Get the default sandbox API endpoint from environment.
  *
- * Derives the endpoint from LANGSMITH_ENDPOINT (or LANGCHAIN_ENDPOINT).
+ * Derives the endpoint from LANGSMITH_ENDPOINT (or LANGCHAIN_ENDPOINT) with the
+ * main Client's base-URL rule, so a trailing "/api/v1" or "/api" is not doubled.
  */
 function getDefaultApiEndpoint(): string {
   const base =
     getLangSmithEnvironmentVariable("ENDPOINT") ??
     "https://api.smith.langchain.com";
-  return `${base.replace(/\/$/, "")}/v2/sandboxes`;
+  return `${getOpenAPIBaseUrl(base)}/api/v2/sandboxes`;
 }
 
 /**
@@ -392,9 +406,10 @@ export class SandboxClient {
 
   private _apiRoot(): string {
     const suffix = "/v2/sandboxes";
-    return this._baseUrl.endsWith(suffix)
+    const root = this._baseUrl.endsWith(suffix)
       ? this._baseUrl.slice(0, -suffix.length)
       : this._baseUrl;
+    return getOpenAPIBaseUrl(root);
   }
 
   /**
